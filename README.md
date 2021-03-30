@@ -1,6 +1,6 @@
 # rclonemount
 
-rclone mount is a rootless systemd integration allowing to seamlessly use one or several `rclone mount` commands as a systemd services with an optionnal custom startup cache warmup script.
+rclone mount is a rootless systemd integration allowing to seamlessly use one or several `rclone mount` commands as a systemd services with an optional directories and files structure cache warmup.
 
 ## Installation
 
@@ -55,14 +55,30 @@ Used to configuration not rclone directly but the command line in particular.
 - `DESTINATION` is the mount point. It must be a valid directory path and the `rclonemount` user (or group) must be have the right permission ont it and its parent directory.
 - `WARMUPCACHE` will trigger a directories and files structure warmup during startup, set to `false` to deactive cache warmup.
 
-#### Global
+#### Global section
 
 Used to set up global rclone options.
 
 - `RCLONE_CHECKERS` I usually set up this to `2 * <nbCores>` (see [rclone documentation](https://rclone.org/docs/#checkers-n) for more details)
-- `RCLONE_FAST_LIST` not actually used as part of rclone `vfs` but is quite effective for cache warmup if enabled (see [rclone documentation](https://rclone.org/docs/#fast-list) for more details)
-- `RCLONE_LOG_LEVEL` controls the rclone verbosity (check the [logs section]() and the [rclone documentation](https://rclone.org/docs/#log-level-level) for more details)
+- `RCLONE_FAST_LIST` not actually used during rclone vfs operations but is quite effective for cache warmup if enabled (see [rclone documentation](https://rclone.org/docs/#fast-list) for more details)
+- `RCLONE_LOG_LEVEL` controls the rclone verbosity (check the [logs section](#checking-logs) and the [rclone documentation](https://rclone.org/docs/#log-level-level) for more details)
 - `RCLONE_TRANSFERS` I usually set up this to `<nbCores>` (see [rclone documentation](https://rclone.org/docs/#transfers-n) for more details)
+
+#### Mount section
+
+Used to set up mount rclone options.
+
+- `RCLONE_ALLOW_OTHER` this is important to have it set to `true`, all virtual filesystem operations will be executed by rclone as `rclonemout` but the files ownership will actually be mapped to a different user/group for compartmentalization. By default FUSE only allow the mounting user to access the virtual filesystem. More on the different mapped user/group below.
+- `RCLONE_ATTR_TIMEOUT` How often the kernel will refresh/ask rclone about file attributes. If the backend is not modified outside this mount, you can increase it to enhance performance (let's say `8760h`, see [rclone documentation](https://rclone.org/commands/rclone_mount/#attribute-caching) for more details.
+- `RCLONE_CACHE_DIR` where rclone will store its cache. Example use `/var/lib/rclone` as base directory but make sure you have enough space or put it elsewhere (check [cache size]() option and see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching)). Be carefull to target a dedicated sub folder for each configuration.
+- `RCLONE_DEFAULT_PERMISSIONS` this is important to have it set to `true` as we allowed other users to access this FUSE mount, file security will be handled by kernel with regular rights (see [rclone documentation](https://rclone.org/commands/rclone_mount/#options) for more details).
+- 
+
+### systemd service unit template
+
+This normally does not need configuration but values here will impact all yours configurations. You can tune them before registering your first configuration.
+
+TODO
 
 ## Usage
 
