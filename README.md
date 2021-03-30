@@ -82,7 +82,7 @@ Used to set up mount rclone options.
 - `RCLONE_VFS_CACHE_MAX_AGE` trigger age of files to be purged of cache each time a cleanup is performed (check `RCLONE_VFS_CACHE_POLL_INTERVAL` and see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching) for details).
 - `RCLONE_VFS_CACHE_MODE` cache mod, see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching) for details.
 - `RCLONE_VFS_CACHE_POLL_INTERVAL` interval to cleanup the cache (see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching) for details)
-- `RCLONE_VFS_READ_AHEAD` disk buffer in addition to the kernel buffer during read (see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-cache-mode-full)
+- `RCLONE_VFS_READ_AHEAD` disk buffer in addition to the kernel buffer during read (see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-cache-mode-full) for details)
 - `RCLONE_VFS_WRITE_BACK` how many time to wait before starting to upload a file (see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching) for details)
 - `RCLONE_WRITE_BACK_CACHE` send writes in batch to rclone, should increase performance especially if a lot of context switching is occuring (see [rclone documentation](https://rclone.org/commands/rclone_mount/#options) for details)
 
@@ -98,7 +98,7 @@ This normally does not need configuration but values here will impact all yours 
 - `User=rclonemount` do not use root to run rclone
 - `Nice=-5` increase system priority for rclone mounts. Reduce time others services using the mount will spend their CPU time in iowait by scheduling rclone mount more often in order for data to be ready for them.
 - `TimeoutStartSec=infinity` as the cache warmup can be quite long if there is thousands of thousands of files, we don't want systemd to consider the unit stalling. Note that cache warmup script using rc has also timeout deactivated.
-- `ExecReload=/bin/kill -SIGHUP $MAINPID` allow easy runtime dir cache purging, see [Purge directories and files structure cache]()
+- `ExecReload=/bin/kill -SIGHUP $MAINPID` allow easy runtime dir cache purging, see [Purge directories and files structure cache](#purge-directories-and-files-structure-cache)
 - `ExecStopPost=-+/bin/umount -f $DESTINATION` sometimes rclone will fail to unmount cleanly. In order to be able to start the unit again and not leave the mount in an awkward state we force an unmount just in case. Will fail when regular mount has succeeded (this is expected and indicated to systemd with `-`). Because a forced unmount need root privilege, this command only will run as root as indicated by `+`.
 
 ## Usage
@@ -146,3 +146,23 @@ systemctl disable --now rclonemount@anotherconf.service
 ```
 
 ### Binding to another service
+
+Now that your virtual filesystem is perfectly integrated to your system as a systemd service unit, there is a big probability others services are meant to use it. It could be important to bind these services to it to prevent their run if/when the mount is not ready.
+
+For example for a plex web server:
+
+```bash
+~$ cat /etc/systemd/system/plexmediaserver.service.d/rclone.conf
+[Unit]
+After=rclonemount@example.service
+BindsTo=rclonemount@example.service
+~$ systemctl daemon-reload
+~$ systemctl restart plexmediaserver.service
+```
+
+This way:
+
+- `plexmediaserver.service` will only start when `rclonemount@example.service` is fully started (ready_
+- if you stop `rclonemount@example.service` systemd will FIRST stop `plexmediaserver.service` THEN stop `rclonemount@example.service`
+- if you restart `rclonemount@example.service` and `plexmediaserver.service` has been stopped because of the dependency, `plexmediaserver.service` will be automatically (re)started
+- if `rclonemount@example.service` fails to start, `plexmediaserver.service` won't start neither
