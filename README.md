@@ -70,7 +70,7 @@ Using `example.env` as reference. Environment variables are used to configure RC
 
 #### Command section
 
-Used to configuration not rclone directly but the command line in particular.
+Used to configure not rclone directly but the command line in particular.
 
 - `SOURCE` reference the rclone backend you want to mount (it must exist in the corresponding `.conf` file, here `example.conf`)
 - `DESTINATION` is the mount point. It must be a valid directory path and the `rclonemount` user (or group) must be have the right permission ont it and its parent directory.
