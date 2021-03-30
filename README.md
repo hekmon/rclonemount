@@ -183,7 +183,7 @@ BindsTo=rclonemount@example.service
 
 This way:
 
-- `plexmediaserver.service` will only start when `rclonemount@example.service` is fully started (ready_
+- `plexmediaserver.service` will only start when `rclonemount@example.service` is fully started/ready
 - if you stop `rclonemount@example.service` systemd will FIRST stop `plexmediaserver.service` THEN stop `rclonemount@example.service`
 - if you restart `rclonemount@example.service` and `plexmediaserver.service` has been stopped because of the dependency, `plexmediaserver.service` will be automatically (re)started
 - if `rclonemount@example.service` fails to start, `plexmediaserver.service` won't start neither
