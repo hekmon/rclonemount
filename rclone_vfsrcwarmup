@@ -1,5 +1,5 @@
 #!/bin/bash -e
-if [ "$WARMUPCACHE" == "no" ]
+if [ "$WARMUPCACHE" == "false" ]
 then
     echo "Skipping vfs cache warmup"
 else
