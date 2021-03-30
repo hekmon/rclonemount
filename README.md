@@ -147,7 +147,7 @@ systemctl disable --now rclonemount@anotherconf.service
 
 ### Binding to another service
 
-Now that your virtual filesystem is perfectly integrated to your system as a systemd service unit, there is a big probability others services are meant to use it. It could be important to bind these services to it to prevent their run if/when the mount is not ready.
+Now that your virtual filesystem is perfectly integrated to your system as a systemd service unit, there is a big probability others services are meant to use it. It could be important to bind these services to it to prevent/delay their start if/when the mount has failed/is not ready.
 
 For example for a plex web server:
 
