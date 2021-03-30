@@ -1,0 +1,9 @@
+#!/bin/bash -e
+if [ "$WARMUPCACHE" == "no" ]
+then
+    echo "Skipping vfs cache warmup"
+else
+    echo "Warming up vfs cache"
+    export RCLONE_RC=false # deactivate server mode from ENV for main exec
+    time rclone --timeout=0 rc --rc-addr "$RCLONE_RC_ADDR" --rc-user "$RCLONE_RC_USER" --rc-pass "$RCLONE_RC_PASS" vfs/refresh recursive=true
+fi

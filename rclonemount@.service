@@ -1,0 +1,19 @@
+[Unit]
+Description=rclone mount for %i
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+User=rclonemount
+Nice=-5
+EnvironmentFile=/etc/rclonemount/%i.env
+ExecStart=/usr/bin/rclone mount $SOURCE $DESTINATION --config /etc/rclonemount/%i.conf
+ExecStartPost=/usr/bin/rclone_vfsrcwarmup
+TimeoutStartSec=infinity
+ExecReload=/bin/kill -SIGHUP $MAINPID
+ExecStopPost=-+/bin/umount -f $DESTINATION
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
