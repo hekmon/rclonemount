@@ -2,6 +2,27 @@
 
 rclone mount is a rootless systemd integration allowing to seamlessly use one or several `rclone mount` commands as a systemd services with an optional directories and files structure cache warmup.
 
+- [rclonemount](#rclonemount)
+  - [Installation](#installation)
+    - [deb pkg (WIP)](#deb-pkg-wip)
+    - [manually](#manually)
+  - [Configuration](#configuration)
+    - [Environment configuration](#environment-configuration)
+      - [Command section](#command-section)
+      - [Global section](#global-section)
+      - [Mount section](#mount-section)
+      - [RC section](#rc-section)
+    - [systemd service unit template](#systemd-service-unit-template)
+  - [Usage](#usage)
+    - [First start](#first-start)
+    - [Usual commands](#usual-commands)
+    - [Checking logs](#checking-logs)
+      - [Live logs](#live-logs)
+      - [Full logs until now](#full-logs-until-now)
+    - [Purge directories and files structure cache](#purge-directories-and-files-structure-cache)
+    - [Unregister](#unregister)
+    - [Binding to another service](#binding-to-another-service)
+
 ## Installation
 
 ### deb pkg (WIP)
