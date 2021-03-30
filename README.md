@@ -120,7 +120,7 @@ This normally does not need configuration but values here will impact all yours 
 - `Nice=-5` increase system priority for rclone mounts. Reduce time others services using the mount will spend their CPU time in iowait by scheduling rclone mount more often in order for data to be ready for them.
 - `TimeoutStartSec=infinity` as the cache warmup can be quite long if there is thousands of thousands of files, we don't want systemd to consider the unit stalling. Note that cache warmup script using rc has also timeout deactivated.
 - `ExecReload=/bin/kill -SIGHUP $MAINPID` allow easy runtime dir cache purging, see [Purge directories and files structure cache](#purge-directories-and-files-structure-cache)
-- `ExecStopPost=-+/bin/umount -f $DESTINATION` sometimes rclone will fail to unmount cleanly. In order to be able to start the unit again and not leave the mount in an awkward state we force an unmount just in case. Will fail when regular mount has succeeded (this is expected and indicated to systemd with `-`). Because a forced unmount need root privilege, this command only will run as root as indicated by `+`.
+- `ExecStopPost=-+/bin/umount -f $DESTINATION` sometimes rclone will fail to unmount cleanly. In order to be able to start the unit again and not leave the mount in an awkward state we force an unmount just in case. Will fail when regular mount has succeeded (this is expected and indicated to systemd with `-`). Because a forced unmount needs root privilege, this command only will run as root as indicated by `+`.
 
 ## Usage
 
