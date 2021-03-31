@@ -1,9 +1,20 @@
 #!/bin/bash -e
-if [ "$WARMUPCACHE" == "false" ]
-then
+if [ "$WARMUPCACHE" == "false" ]; then
     echo "Skipping vfs cache warmup"
-else
-    echo "Warming up vfs cache"
-    export RCLONE_RC=false # deactivate server mode from ENV for main exec
-    time rclone --timeout=0 rc --rc-addr "$RCLONE_RC_ADDR" --rc-user "$RCLONE_RC_USER" --rc-pass "$RCLONE_RC_PASS" vfs/refresh recursive=true
+    exit 0
 fi
+if [ -z "$RCLONE_RC_ADDR" ]; then
+    echo "RCLONE_RC_ADDR env var not set" >&2
+    exit 1
+fi
+if [ -z "$RCLONE_RC_USER" ]; then
+    echo "RCLONE_RC_USER env var not set" >&2
+    exit 1
+fi
+if [ -z "$RCLONE_RC_PASS" ]; then
+    echo "RCLONE_RC_PASS env var not set" >&2
+    exit 1
+fi
+echo "Warming up vfs cache"
+export RCLONE_RC=false # deactivate server mode from ENV for main exec
+time rclone --timeout=0 rc --rc-addr "$RCLONE_RC_ADDR" --rc-user "$RCLONE_RC_USER" --rc-pass "$RCLONE_RC_PASS" vfs/refresh recursive=true
