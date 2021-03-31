@@ -2,7 +2,7 @@
 
 rclone mount is a rootless systemd integration allowing to seamlessly use one or several `rclone mount` commands as a systemd services with an optional directories and files structure cache warmup.
 
-rootless means that root privileges will not be used during run (as they should not) and rclone mount execution will be compartimented on a dedicated user (`rclonemount`) while the files and directories can be mapped to specific and different UID/GID with valid linux permissions enforced by the kernel. In addition to avoid using root, this means that you can provide vfs to your services without giving them the ability to read your rclone backend credentials (as config files and execution will be compartimented on a dedicated user).
+rootless means that root privileges will not be used during run (as they should not) and rclone mount execution will be compartimented on a dedicated user (`rclonemount`) while the files and directories can be mapped to specific and different UID/GID with valid linux permissions enforced by the kernel. In addition to avoid using root, this means that you can provide vfs to your services without giving them the ability to read your rclone backend credentials (as config files and rclone execution will be compartimented on a dedicated user).
 
 The directories and files structure cache warmup allows to fully scan the structure of your backend and have it in memory before the systemd unit is actually ready allowing subsequent services whichs depends on the mount and its VFS to start with the full vfs structure already cached locally.
 
@@ -93,7 +93,7 @@ Used to set up global rclone options.
 
 Used to set up mount rclone options.
 
-- `RCLONE_ALLOW_OTHER` this is important to have it set to `true`, all virtual filesystem operations will be executed by rclone as `rclonemout` but the files ownership will actually be mapped to a different user/group for compartmentalization. By default FUSE only allow the mounting user to access the virtual filesystem. More on the different mapped user/group below.
+- `RCLONE_ALLOW_OTHER` this is important to have it set to `true`, all virtual filesystem operations will be executed by rclone as `rclonemout` but the files ownership will actually be mapped to a different user/group for compartmentalization. By default FUSE only allows the mounting user to access the virtual filesystem. More on the different mapped user/group below.
 - `RCLONE_ATTR_TIMEOUT` How often the kernel will refresh/ask rclone about file attributes. If the backend is not modified outside this mount, you can increase it to enhance performance (let's say `8760h`, see [rclone documentation](https://rclone.org/commands/rclone_mount/#attribute-caching) for details.
 - `RCLONE_CACHE_DIR` where rclone will store its cache. Example use `/var/lib/rclone` as base directory but make sure you have enough space or put it elsewhere (check `RCLONE_VFS_CACHE_MAX_SIZE` option and see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching)). Be carefull to target a dedicated sub folder for each configuration.
 - `RCLONE_DEFAULT_PERMISSIONS` this is important to have it set to `true` as we allowed other users to access this FUSE mount, file security will be handled by kernel with regular rights (see [rclone documentation](https://rclone.org/commands/rclone_mount/#options) for details).
@@ -124,7 +124,7 @@ This normally does not need configuration but values here will impact all yours 
 - `Nice=-5` increase system priority for rclone mounts. Reduce time others services using the mount will spend their CPU time in iowait by scheduling rclone mount more often in order for data to be ready for them.
 - `TimeoutStartSec=infinity` as the cache warmup can be quite long if there is thousands of thousands of files, we don't want systemd to consider the unit stalling. Note that cache warmup script using rc has also timeout deactivated.
 - `ExecReload=/bin/kill -SIGHUP $MAINPID` allow easy runtime dir cache purging, see [Purge directories and files structure cache](#purge-directories-and-files-structure-cache)
-- `ExecStopPost=-+/bin/umount -f $DESTINATION` sometimes rclone will fail to unmount cleanly. In order to be able to start the unit again and not leave the mount in an awkward state we force an unmount just in case. Will fail when regular mount has succeeded (this is expected and indicated to systemd with `-`). Because a forced unmount needs root privilege, this command only will run as root as indicated by `+`.
+- `ExecStopPost=-+/bin/umount -f $DESTINATION` sometimes rclone will fail to unmount cleanly. In order to be able to start the unit again and not leave the system with a mount in an awkward state, we force an unmount just in case. Will fail when regular mount has succeeded (this is expected and valid as indicated to systemd with `-`). Because a forced unmount needs root privilege, this command only will run as root as indicated by `+`.
 
 ## Usage
 
@@ -142,6 +142,7 @@ systemctl enable --now rclonemount@anotherconf.service
 systemctl start rclonemount@anotherconf.service
 systemctl stop rclonemount@anotherconf.service
 systemctl restart rclonemount@anotherconf.service
+systemctl status rclonemount@anotherconf.service
 ```
 
 ### Checking logs
