@@ -25,7 +25,7 @@ The directories and files structure cache warmup allows to fully scan the struct
       - [Full logs until now](#full-logs-until-now)
     - [Purge directories and files structure cache](#purge-directories-and-files-structure-cache)
     - [Unregister](#unregister)
-    - [Binding to another service](#binding-to-another-service)
+    - [Service binding](#service-binding)
 
 ## Installation
 
@@ -173,7 +173,7 @@ systemctl reload rclonemount@anotherconf.service
 systemctl disable --now rclonemount@anotherconf.service
 ```
 
-### Binding to another service
+### Service binding
 
 Now that your virtual filesystem is perfectly integrated to your system as a systemd service unit, there is a big probability others services are meant to use it. It could be important to bind these services to it to prevent/delay their start if/when the mount has failed/is not ready.
 
