@@ -67,7 +67,7 @@ chmod 640 /etc/rclonemount/*
 
 ### Environment configuration
 
-Using `example.env` as reference. Environment variables are used to configure RCLONE to avoid specifying these options on the command line which would lead us to edit the systemd unit service file and:
+Using `example.env` as reference. Environment variables are used to [configure rclone](https://rclone.org/docs/#environment-variables) to avoid specifying these options on the command line which would lead us to edit the systemd unit service file and:
 
 - force us to reload the unit into systemd `sytemctl daemon-reload` for every modification before issuing the actual service restart
 - prevent us from mutualize the service unit file (`rclonemount@.service` is a [systemd service unit template](https://www.freedesktop.org/software/systemd/man/systemd.unit.html))
