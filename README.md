@@ -115,6 +115,8 @@ Used to set up mount rclone options.
 
 Only used for cache warmup at start. Be carefull to set a different port in `RCLONE_RC_ADDR` for each configuration. See `rclone_vfsrcwarmup` script for details.
 
+You can set `RCLONE_RC` to `false` if `WARMUPCACHE` in the [Global section](#global-section) is set to `false` as well (it will prevent rclone from starting and binding the rc server).
+
 ### systemd service unit template
 
 This normally does not need configuration but values here will impact all yours configurations. You can tune them before registering your first configuration.
