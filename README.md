@@ -2,6 +2,10 @@
 
 rclone mount is a rootless systemd integration allowing to seamlessly use one or several `rclone mount` commands as a systemd services with an optional directories and files structure cache warmup.
 
+rootless means that root privileges will not be used during run (as they should not) and rclone mount execution will be compartimented on a dedicated user (`rclonemount`) while the files and directories can be mapped to specific and different UID/GID with valid linux permissions enforced by the kernel. In addition to avoid using root, this means that you can provide vfs to your services without giving them the ability to read your rclone backend credentials (as config file and execution will be compartimented on a dedicated user).
+
+The directories and files structure cache warmup allows to fully scan the structure of your backend and have it in memory before the systemd unit is actually ready allowing subsequent services whichs depends on the mount and its VFS to start with the vfs structure already in memory.
+
 - [rclonemount](#rclonemount)
   - [Installation](#installation)
     - [deb pkg (WIP)](#deb-pkg-wip)
