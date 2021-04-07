@@ -43,7 +43,7 @@ Just install it and go straight to configuration. It will require that you have 
 - Execute the following commands as root for a future rootless usage:
 
 ```bash
-useradd --home-dir /var/lib/rclonemount --create-home --system --shell /usr/sbin/nologin
+useradd --home-dir /var/lib/rclonemount --create-home --system --shell /usr/sbin/nologin rclonemount
 chown rclonemount: /etc/rclonemount
 chmod 750 /etc/rclonemount /var/lib/rclonemount
 chmod 640 /etc/rclonemount/*
