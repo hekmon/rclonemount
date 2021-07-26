@@ -7,6 +7,7 @@ After=network-online.target
 Type=notify
 User=rclonemount
 Nice=-5
+LimitNOFILE=32768
 EnvironmentFile=/etc/rclonemount/%i.env
 ExecStart=/usr/bin/rclone mount $SOURCE $DESTINATION --config /etc/rclonemount/%i.conf
 ExecStartPost=/usr/bin/rclone_vfsrcwarmup
