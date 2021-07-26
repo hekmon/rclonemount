@@ -16,6 +16,7 @@ The directories and files structure cache warmup allows to fully scan the struct
       - [Global section](#global-section)
       - [Mount section](#mount-section)
       - [RC section](#rc-section)
+    - [FUSE configuration](#fuse-configuration)
     - [systemd service unit template](#systemd-service-unit-template)
   - [Usage](#usage)
     - [First start](#first-start)
@@ -119,7 +120,7 @@ You can set `RCLONE_RC` to `false` if `WARMUPCACHE` in the [Command section](#co
 
 ### FUSE configuration
 
-FUSE needs to be configured to allow the usage of other users' mounts (in our case `rclonemount` and your others users). This need to be done only once. Add `user_allow_other` to the `/etc/fuse.conf` file.
+FUSE needs to be configured to allow the usage of other users' mounts (in our case `rclonemount` and your others users). Add `user_allow_other` to the `/etc/fuse.conf` file. This need to be done only once, before your first mount.
 
 Example:
 
