@@ -95,7 +95,7 @@ Used to set up mount rclone options.
 
 - `RCLONE_ALLOW_OTHER` this is important to have it set to `true`, all virtual filesystem operations will be executed by rclone as `rclonemout` but the files ownership will actually be mapped to a different user/group for compartmentalization. By default FUSE only allows the mounting user to access the virtual filesystem. More on the different mapped user/group below.
 - `RCLONE_ATTR_TIMEOUT` How often the kernel will refresh/ask rclone about file attributes. If the backend is not modified outside this mount, you can increase it to enhance performance (let's say `8760h`, see [rclone documentation](https://rclone.org/commands/rclone_mount/#attribute-caching) for details.
-- `RCLONE_CACHE_DIR` where rclone will store its cache. Example use `/var/lib/rclone` as base directory but make sure you have enough space or put it elsewhere (check `RCLONE_VFS_CACHE_MAX_SIZE` option and see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching)). Be carefull to target a dedicated sub folder for each configuration.
+- `RCLONE_CACHE_DIR` where rclone will store its cache. Example use `/var/lib/rclone` as base directory but make sure you have enough space or put it elsewhere (check `RCLONE_VFS_CACHE_MAX_SIZE` option and see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-file-caching)). Be carefull to target a dedicated sub folder for each configuration. Target must be writable by the `rclonemount` user.
 - `RCLONE_DEFAULT_PERMISSIONS` this is important to have it set to `true` as we allowed other users to access this FUSE mount, file security will be handled by kernel with regular rights (see [rclone documentation](https://rclone.org/commands/rclone_mount/#options) for details).
 - `RCLONE_DIR_CACHE_TIME` directories structure cache (see [rclone documentation](https://rclone.org/commands/rclone_mount/#vfs-directory-cache) for details).
 - `RCLONE_DIR_PERMS` default permissions for mounted directories, this is important as we have activated `allow-other` and `default-permissions`. Example value `0750` will allow the mapped UID to read/write/traverse and GID to read/traverse but will forbid any actions by others (see [rclone documentation](https://rclone.org/commands/rclone_mount/#options) for details).
@@ -116,6 +116,23 @@ Used to set up mount rclone options.
 Only used for cache warmup at start. Be carefull to set a different port in `RCLONE_RC_ADDR` for each configuration. See `rclone_vfsrcwarmup` script for details.
 
 You can set `RCLONE_RC` to `false` if `WARMUPCACHE` in the [Command section](#command-section) is set to `false` as well (it will prevent rclone from starting and binding the rc server).
+
+### FUSE configuration
+
+FUSE needs to be configured to allow the usage of other users' mounts (in our case `rclonemount` and your others users). This need to be done only once. Add `user_allow_other` to the `/etc/fuse.conf` file.
+
+Example:
+
+```bash
+# /etc/fuse.conf - Configuration file for Filesystem in Userspace (FUSE)
+
+# Set the maximum number of FUSE mounts allowed to non-root users.
+# The default is 1000.
+#mount_max = 1000
+
+# Allow non-root users to specify the allow_other or allow_root mount options.
+user_allow_other
+```
 
 ### systemd service unit template
 
