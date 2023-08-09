@@ -13,7 +13,6 @@ ExecStart=/usr/bin/rclone mount $SOURCE $DESTINATION --config /etc/rclonemount/%
 ExecStartPost=/usr/bin/rclone_vfsrcwarmup
 TimeoutStartSec=infinity
 ExecReload=/bin/kill -SIGHUP $MAINPID
-ExecStopPost=-+/bin/umount -f $DESTINATION
 Restart=always
 
 [Install]
